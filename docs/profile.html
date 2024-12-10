@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>プロフィール - こんごうのホームページ</title>
+  <title>プロフィール</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,7 +40,7 @@
     nav a:hover {
       text-decoration: underline;
     }
-    .main-content {
+    .profile-container {
       text-align: center;
       margin: 20px auto;
       padding: 20px;
@@ -49,16 +49,32 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    h2 {
-      color: #007BFF;
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: center;
     }
-    .profile-info {
-      text-align: left;
-      margin-top: 20px;
+    .profile-header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid #007BFF;
+    }
+    .profile-info h2 {
+      font-size: 1.8rem;
+      margin: 0;
     }
     .profile-info p {
       font-size: 1rem;
-      margin: 10px 0;
+      margin: 5px 0;
+      color: #666;
+    }
+    .profile-section h3 {
+      font-size: 1.5rem;
+      border-bottom: 2px solid #007BFF;
+      display: inline-block;
+      margin-bottom: 10px;
     }
     footer {
       background-color: #007BFF;
@@ -82,15 +98,27 @@
     <a href="profile.html">プロフィール</a>
   </nav>
 
-  <div class="main-content">
-    <h2>開発者のプロフィール</h2>
-    <div class="profile-info">
-      <p><strong>名前:</strong> こんごう(Kongou173)</p>
+  <div class="profile-container">
+    <div class="profile-header">
+      <img src="https://assets.st-note.com/production/uploads/images/152732631/profile_9bd6d1b52fe50c79a1b6ae8719f90ad4.jpg?width=104&height=104&dpr=2&crop=1:1,smart" alt="プロフィール画像">
+      <div class="profile-info">
+        <h2>こんごう(Kongou173)</h2>
+        <p>coresync bot開発者</p>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h3>基本情報</h3>
       <p><strong>年齢:</strong> 15</p>
       <p><strong>生年月日:</strong> 2009/5/26</p>
       <p><strong>目標:</strong> Discordでそれなりに有名になること、幻想郷に行くこと</p>
+      <p><strong>好きな物:</strong> 幻想郷、あまり難しくないゲーム、社会(日本史)</p>
       <p><strong>趣味:</strong> マイクラ、読書、ボカロを聴くこと</p>
-      <p><strong>最後に一言:</strong> 本当に幻想郷に行きたい。夢を壊さない方がいいぞ。</p>
+    </div>
+
+    <div class="profile-section">
+      <h3>最後に一言</h3>
+      <p>本当に幻想郷に行きたい。夢を壊さない方がいいぞ。</p>
     </div>
   </div>
 
