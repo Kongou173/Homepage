@@ -3,46 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>プロフィール</title>
+  <title>プロフィール - こんごうのホームページ</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #f9f9f9;
-      text-align: center;
     }
     header {
       background-color: #007BFF;
       color: white;
-      padding: 20px;
+      padding: 10px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    header p {
+      margin: 5px 0 0;
+      font-size: 1rem;
     }
     nav {
       background-color: #0056b3;
-      padding: 10px;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
     }
     nav a {
       color: white;
       margin: 0 15px;
       text-decoration: none;
+      font-weight: bold;
     }
-    .content {
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .main-content {
+      text-align: center;
+      margin: 20px auto;
       padding: 20px;
+      max-width: 800px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    .content h2 {
-      color: #333;
+    h2 {
+      color: #007BFF;
+    }
+    .profile-info {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .profile-info p {
+      font-size: 1rem;
+      margin: 10px 0;
     }
     footer {
       background-color: #007BFF;
       color: white;
-      padding: 10px;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
+  <header>
+    <h1>こんごうのホームページ</h1>
+    <p>ようこそ！ここでは管理人に関する情報やBotの詳細を共有しています。</p>
+  </header>
 
   <nav>
     <a href="index.html">ホーム</a>
@@ -51,37 +82,20 @@
     <a href="profile.html">プロフィール</a>
   </nav>
 
-  <h1>開発者のプロフィール</h1>
-
-  <div class="profile-container">
-    <div class="profile-header">
-      <img src="https://assets.st-note.com/production/uploads/images/152732631/profile_9bd6d1b52fe50c79a1b6ae8719f90ad4.jpg?width=104&height=104&dpr=2&crop=1:1,smart" alt="プロフィール画像">
-      <div class="profile-info">
-        <h2>こんごう(Kongou173)</h2>
-        <p>coresync bot開発者</p>
-      </div>
-    </div>
-
-    <div class="profile-section">
-      <h3>基本情報</h3>
+  <div class="main-content">
+    <h2>開発者のプロフィール</h2>
+    <div class="profile-info">
+      <p><strong>名前:</strong> こんごう(Kongou173)</p>
       <p><strong>年齢:</strong> 15</p>
-      <p><strong>誕生日:</strong> 2009/5/26</p>
-      <p><strong>目標:</strong> discordでそれなりに有名になること、幻想郷に行くこと</p>
-      <p><strong>好きな物:</strong> 幻想郷、あまり難しくないゲーム、社会(日本史)など</p>
-      <p><strong>嫌いな物:</strong> きのこ料理、数学全般、理科など</p>
-      <p><strong>主に好きな曲:</strong> White Letter、初音ミクさんの心境、stardust dreams</p>
-      <p><strong>趣味:</strong> マイクラ、ボカロ、読書、東方のヤンデレssを書くこと、海自護衛艦の見学</p>
-    </div>
-
-    <div class="profile-section">
-      <h3>最後に一言</h3>
-      <p>本当に幻想郷に行きたい。</p>
+      <p><strong>生年月日:</strong> 2009/5/26</p>
+      <p><strong>目標:</strong> Discordでそれなりに有名になること、幻想郷に行くこと</p>
+      <p><strong>趣味:</strong> マイクラ、読書、ボカロを聴くこと</p>
+      <p><strong>最後に一言:</strong> 本当に幻想郷に行きたい。夢を壊さない方がいいぞ。</p>
     </div>
   </div>
-  
-  <footer>
-    <p>© 2024 coresync bot. All Rights Reserved.</p>
-  </footer>
 
+  <footer>
+    <p>© 2024 こんごう. All Rights Reserved.</p>
+  </footer>
 </body>
 </html>
