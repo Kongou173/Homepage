@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>現在の時間 - こんごうのブログ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 0;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    main {
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 600px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .time-display {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .remaining-days {
+      font-size: 1.2rem;
+      color: #555;
+    }
+    footer {
+      background-color: #007BFF;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>現在の時間と今年の残り日数</h1>
+  </header>
+
+  <nav>
+    <a href="index.html">ホーム</a>
+    <a href="bot.html">Coresync bot公式サイト</a>
+    <a href="contact.html">連絡先</a>
+    <a href="profile.html">プロフィール</a>
+    <a href="time.html">時間</a>
+  </nav>
+  
+  <main>
+    <div class="time-display" id="current-time">現在の時間を取得中...</div>
+    <div class="remaining-days" id="remaining-days">残り日数を計算中...</div>
+  </main>
+  <footer>
+    <p>© 2024 こんごう. All Rights Reserved.</p>
+  </footer>
+  <script>
+    // 日本時間を表示する関数
+    function updateTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1; // 月は0から始まるため+1
+      const day = now.getDate();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      const formattedHours = hours % 12 === 0 ? 12 : hours % 12; // 12時間形式
+      const formattedTime = `${year}-${month}-${day} (${ampm})${formattedHours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      document.getElementById('current-time').textContent = formattedTime;
+
+      // 元旦までの残り日数を計算
+      const newYear = new Date(year + 1, 0, 1, 0, 0, 0); // 次の元旦
+      const remainingTime = Math.floor((newYear - now) / (1000 * 60 * 60 * 24)) + 1; // 今日を含む
+      document.getElementById('remaining-days').textContent = `今年の残り日数: ${remainingTime}日`;
+    }
+
+    // 1秒ごとに時間を更新
+    setInterval(updateTime, 1000);
+    updateTime(); // 初回実行
+  </script>
+</body>
+</html>
