@@ -87,6 +87,21 @@
         .white-score {
             color: white;
         }
+
+        #retireBtn {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #ff4747;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #retireBtn:hover {
+            background-color: #ff1c1c;
+        }
     </style>
 </head>
 <body>
@@ -98,6 +113,7 @@
     <div id="message"></div>
     <div id="board"></div>
     <div id="score" class="score-text"></div>
+    <button id="retireBtn">リタイア</button>
 
     <script>
         const boardElement = document.getElementById('board');
@@ -105,6 +121,7 @@
         const scoreElement = document.getElementById('score');
         const blackBtn = document.getElementById('blackBtn');
         const whiteBtn = document.getElementById('whiteBtn');
+        const retireBtn = document.getElementById('retireBtn');
         let playerColor = null;
         let computerColor = null;
         let board = Array(8).fill().map(() => Array(8).fill(null)); // 8x8ボード
@@ -166,6 +183,7 @@
 
             initializeBoard();
             messageElement.textContent = `あなたのターン (${playerColor})`;
+            retireBtn.style.display = 'block'; // リタイアボタンを表示
         }
 
         // プレイヤーの手番
@@ -271,6 +289,8 @@
             } else {
                 messageElement.textContent = '引き分け！';
             }
+
+            retireBtn.style.display = 'none'; // ゲーム終了後にリタイアボタンを非表示
         }
 
         // 有効な手を取得
@@ -295,6 +315,22 @@
                 <span class="white-score">白: ${whiteCount}</span>
             `;
         }
+
+        // リタイア処理
+        retireBtn.addEventListener('click', () => {
+            if (confirm('リタイアしますか？')) {
+                const blackCount = board.flat().filter(cell => cell === 'black').length;
+                const whiteCount = board.flat().filter(cell => cell === 'white').length;
+                
+                if (playerColor === 'black') {
+                    messageElement.textContent = `あなたの勝ち！ (リタイア)`;
+                } else if (playerColor === 'white') {
+                    messageElement.textContent = `コンピュータの勝ち！ (リタイア)`;
+                }
+                
+                retireBtn.style.display = 'none'; // リタイア後はボタンを非表示に
+            }
+        });
     </script>
 
 </body>
