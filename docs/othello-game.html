@@ -102,6 +102,21 @@
         #retireBtn:hover {
             background-color: #ff1c1c;
         }
+
+        #passBtn {
+            margin-top: 10px;
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #f0ad4e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #passBtn:hover {
+            background-color: #ec971f;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +129,7 @@
     <div id="board"></div>
     <div id="score" class="score-text"></div>
     <button id="retireBtn">リタイア</button>
+    <button id="passBtn" style="display: none;">パス</button>
 
     <script>
         const boardElement = document.getElementById('board');
@@ -122,9 +138,12 @@
         const blackBtn = document.getElementById('blackBtn');
         const whiteBtn = document.getElementById('whiteBtn');
         const retireBtn = document.getElementById('retireBtn');
+        const passBtn = document.getElementById('passBtn');
         let playerColor = null;
         let computerColor = null;
         let board = Array(8).fill().map(() => Array(8).fill(null)); // 8x8ボード
+        let currentPlayer = 'player'; // プレイヤーが最初
+        let passTurn = false; // パスしたかどうか
 
         // 初期化
         function initializeBoard() {
@@ -184,6 +203,7 @@
             initializeBoard();
             messageElement.textContent = `あなたのターン (${playerColor})`;
             retireBtn.style.display = 'block'; // リタイアボタンを表示
+            passBtn.style.display = 'none'; // パスボタンを非表示
         }
 
         // プレイヤーの手番
@@ -200,6 +220,7 @@
             if (isGameOver()) {
                 endGame();
             } else {
+                currentPlayer = 'computer';
                 messageElement.textContent = `コンピュータのターン (${computerColor})`;
                 setTimeout(computerMove, 500);
             }
@@ -225,6 +246,7 @@
             if (isGameOver()) {
                 endGame();
             } else {
+                currentPlayer = 'player';
                 messageElement.textContent = `あなたのターン (${playerColor})`;
             }
         }
@@ -329,6 +351,16 @@
                 }
                 
                 retireBtn.style.display = 'none'; // リタイア後はボタンを非表示に
+            }
+        });
+
+        // パス処理
+        passBtn.addEventListener('click', () => {
+            if (currentPlayer === 'player') {
+                currentPlayer = 'computer';
+                messageElement.textContent = `コンピュータのターン (${computerColor})`;
+                setTimeout(computerMove, 500);
+                passTurn = true;
             }
         });
     </script>
