@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シューティングゲーム</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #111;
+            border: 1px solid white;
+        }
+
+        #stats {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="stats">
+    <div>スコア: <span id="score">0</span></div>
+    <div>残機: <span id="lives">5</span></div>
+    <div>HP: <span id="hp">100</span></div>
+</div>
+
+<canvas id="gameCanvas" width="480" height="640"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // ゲーム設定
+    const playerWidth = 40;
+    const playerHeight = 20;
+    let playerX = canvas.width / 2 - playerWidth / 2;
+    const playerSpeed = 5;
+    let bullets = [];
+    let enemies = [];
+    let enemyBullets = [];
+    let score = 0;
+    let lives = 5;
+    let hp = 100;
+    let gameOver = false;
+    let bossAppeared = false;
+
+    // キー入力
+    const keys = {};
+
+    document.addEventListener("keydown", (e) => keys[e.key] = true);
+    document.addEventListener("keyup", (e) => keys[e.key] = false);
+
+    // プレイヤー描画
+    function drawPlayer() {
+        ctx.fillStyle = "cyan";
+        ctx.fillRect(playerX, canvas.height - playerHeight - 10, playerWidth, playerHeight);
+    }
+
+    // 弾発射
+    function fireBullet() {
+        bullets.push({
+            x: playerX + playerWidth / 2 - 2,
+            y: canvas.height - playerHeight - 20,
+            width: 4,
+            height: 10,
+        });
+    }
+
+    // 弾の描画
+    function drawBullets() {
+        ctx.fillStyle = "yellow";
+        bullets.forEach((bullet, index) => {
+            bullet.y -= 8;
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            if (bullet.y < 0) bullets.splice(index, 1);
+        });
+    }
+
+    // 敵生成
+    function spawnEnemy(x, y, type = "normal") {
+        enemies.push({
+            x,
+            y,
+            width: 30,
+            height: 30,
+            type,
+            hp: type === "boss" ? 50 : 1,
+        });
+    }
+
+    // 敵の描画
+    function drawEnemies() {
+        enemies.forEach((enemy, index) => {
+            if (enemy.type === "boss") ctx.fillStyle = "red";
+            else if (enemy.type === "shooter") ctx.fillStyle = "orange";
+            else ctx.fillStyle = "green";
+
+            ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+            if (enemy.type === "shooter" && Math.random() < 0.02) {
+                enemyBullets.push({
+                    x: enemy.x + enemy.width / 2 - 2,
+                    y: enemy.y + enemy.height,
+                    width: 4,
+                    height: 10,
+                });
+            }
+
+            // 移動
+            if (enemy.type === "normal" || enemy.type === "shooter") enemy.y += 2;
+            if (enemy.type === "boss") enemy.y += 1;
+
+            // 画面外に出たら削除
+            if (enemy.y > canvas.height) enemies.splice(index, 1);
+        });
+    }
+
+    // 敵の弾の描画
+    function drawEnemyBullets() {
+        ctx.fillStyle = "red";
+        enemyBullets.forEach((bullet, index) => {
+            bullet.y += 6;
+            ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+
+            // プレイヤーに当たったら
+            if (
+                bullet.x < playerX + playerWidth &&
+                bullet.x + bullet.width > playerX &&
+                bullet.y < canvas.height - playerHeight - 10 &&
+                bullet.y + bullet.height > canvas.height - playerHeight - 10
+            ) {
+                enemyBullets.splice(index, 1);
+                hp -= 1;
+                if (hp <= 0) {
+                    lives -= 1;
+                    hp = 100;
+                    if (lives <= 0) gameOver = true;
+                }
+            }
+
+            // 画面外に出たら削除
+            if (bullet.y > canvas.height) enemyBullets.splice(index, 1);
+        });
+    }
+
+    // 弾と敵の衝突判定
+    function checkCollisions() {
+        bullets.forEach((bullet, bulletIndex) => {
+            enemies.forEach((enemy, enemyIndex) => {
+                if (
+                    bullet.x < enemy.x + enemy.width &&
+                    bullet.x + bullet.width > enemy.x &&
+                    bullet.y < enemy.y + enemy.height &&
+                    bullet.y + bullet.height > enemy.y
+                ) {
+                    bullets.splice(bulletIndex, 1);
+                    enemy.hp -= 1;
+                    if (enemy.hp <= 0) {
+                        enemies.splice(enemyIndex, 1);
+                        score += 100;
+                    }
+                }
+            });
+        });
+    }
+
+    // ゲームの描画
+    function drawGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // プレイヤー描画
+        drawPlayer();
+
+        // 弾描画
+        drawBullets();
+
+        // 敵描画
+        drawEnemies();
+
+        // 敵の弾描画
+        drawEnemyBullets();
+
+        // スコア表示
+        document.getElementById("score").textContent = score;
+
+        // 残機表示
+        document.getElementById("lives").textContent = lives;
+
+        // HP表示
+        document.getElementById("hp").textContent = hp;
+
+        // 衝突判定
+        checkCollisions();
+
+        // ゲームオーバー
+        if (gameOver) {
+            ctx.fillStyle = "red";
+            ctx.font = "30px Arial";
+            ctx.fillText("ゲームオーバー", canvas.width / 2 - 80, canvas.height / 2);
+            return;
+        }
+
+        // 勝利判定
+        if (bossAppeared && enemies.length === 0) {
+            ctx.fillStyle = "cyan";
+            ctx.font = "30px Arial";
+            ctx.fillText("ゲームクリア", canvas.width / 2 - 80, canvas.height / 2);
+            return;
+        }
+
+        requestAnimationFrame(drawGame);
+    }
+
+    // ゲーム開始
+    function startGame() {
+        setInterval(() => {
+            if (Math.random() < 0.2) spawnEnemy(Math.random() * (canvas.width - 30), 0, "normal");
+            if (Math.random() < 0.05) spawnEnemy(Math.random() * (canvas.width - 30), 0, "shooter");
+
+            // ボス出現
+            if (score >= 1000 && !bossAppeared) {
+                spawnEnemy(canvas.width / 2 - 40, 0, "boss");
+                bossAppeared = true;
+            }
+        }, 1000);
+
+        requestAnimationFrame(drawGame);
+    }
+
+    // 入力処理
+    function handleInput() {
+        if (keys["ArrowLeft"] && playerX > 0) playerX -= playerSpeed;
+        if (keys["ArrowRight"] && playerX < canvas.width - playerWidth) playerX += playerSpeed;
+        if (keys[" "]) fireBullet();
+        requestAnimationFrame(handleInput);
+    }
+
+    // ゲーム開始
+    startGame();
+    handleInput();
+</script>
+
+</body>
+</html>
