@@ -18,17 +18,17 @@
 
         #board {
             display: grid;
-            grid-template-columns: repeat(8, 50px);
-            grid-template-rows: repeat(8, 50px);
-            gap: 5px;
+            grid-template-columns: repeat(8, 60px);
+            grid-template-rows: repeat(8, 60px);
+            gap: 2px;
             margin-top: 20px;
             justify-content: center;
+            background-color: green; /* 盤面の背景色 */
         }
 
         .cell {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
+            width: 60px;
+            height: 60px;
             background-color: #3c3c3c;
             position: relative;
         }
@@ -36,11 +36,23 @@
         .black {
             background-color: black;
             border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .white {
             background-color: white;
             border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         #message {
@@ -50,6 +62,7 @@
         #score {
             margin-top: 20px;
             font-size: 18px;
+            font-weight: bold;
         }
 
         button {
@@ -62,6 +75,18 @@
         .selected {
             font-weight: bold;
         }
+
+        .score-text {
+            font-size: 20px;
+        }
+
+        .black-score {
+            color: black;
+        }
+
+        .white-score {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -72,7 +97,7 @@
     <button id="whiteBtn">白</button>
     <div id="message"></div>
     <div id="board"></div>
-    <div id="score"></div>
+    <div id="score" class="score-text"></div>
 
     <script>
         const boardElement = document.getElementById('board');
@@ -265,7 +290,10 @@
         function updateScore() {
             const blackCount = board.flat().filter(cell => cell === 'black').length;
             const whiteCount = board.flat().filter(cell => cell === 'white').length;
-            scoreElement.textContent = `黒: ${blackCount} | 白: ${whiteCount}`;
+            scoreElement.innerHTML = `
+                <span class="black-score">黒: ${blackCount}</span> |
+                <span class="white-score">白: ${whiteCount}</span>
+            `;
         }
     </script>
 
