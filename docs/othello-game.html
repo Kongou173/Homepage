@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オセロゲーム</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 5px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            background-color: #3c3c3c;
+            position: relative;
+        }
+
+        .black {
+            background-color: black;
+            border-radius: 50%;
+        }
+
+        .white {
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        #message {
+            margin-top: 20px;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .selected {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>オセロゲーム</h1>
+    <p>プレイヤーの色を選んでください</p>
+    <button id="blackBtn">黒</button>
+    <button id="whiteBtn">白</button>
+    <div id="message"></div>
+    <div id="board"></div>
+    <div id="score"></div>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const messageElement = document.getElementById('message');
+        const scoreElement = document.getElementById('score');
+        const blackBtn = document.getElementById('blackBtn');
+        const whiteBtn = document.getElementById('whiteBtn');
+        let playerColor = null;
+        let computerColor = null;
+        let board = Array(8).fill().map(() => Array(8).fill(null)); // 8x8ボード
+
+        // 初期化
+        function initializeBoard() {
+            board = Array(8).fill().map(() => Array(8).fill(null));
+            board[3][3] = 'white';
+            board[3][4] = 'black';
+            board[4][3] = 'black';
+            board[4][4] = 'white';
+            drawBoard();
+            updateScore();
+        }
+
+        // ボードの描画
+        function drawBoard() {
+            boardElement.innerHTML = ''; // ボードをリセット
+
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    if (board[row][col]) {
+                        const disc = document.createElement('div');
+                        disc.classList.add(board[row][col]);
+                        cell.appendChild(disc);
+                    }
+
+                    cell.addEventListener('click', () => handlePlayerMove(row, col));
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        // プレイヤーの色を選択
+        blackBtn.addEventListener('click', () => {
+            playerColor = 'black';
+            computerColor = 'white';
+            blackBtn.classList.add('selected');
+            whiteBtn.classList.remove('selected');
+            startGame();
+        });
+
+        whiteBtn.addEventListener('click', () => {
+            playerColor = 'white';
+            computerColor = 'black';
+            whiteBtn.classList.add('selected');
+            blackBtn.classList.remove('selected');
+            startGame();
+        });
+
+        // ゲーム開始
+        function startGame() {
+            if (playerColor === null) {
+                return;
+            }
+
+            initializeBoard();
+            messageElement.textContent = `あなたのターン (${playerColor})`;
+        }
+
+        // プレイヤーの手番
+        function handlePlayerMove(row, col) {
+            if (board[row][col] !== null || !isValidMove(row, col, playerColor)) {
+                return;
+            }
+
+            board[row][col] = playerColor;
+            flipDiscs(row, col, playerColor);
+            drawBoard();
+            updateScore();
+
+            if (isGameOver()) {
+                endGame();
+            } else {
+                messageElement.textContent = `コンピュータのターン (${computerColor})`;
+                setTimeout(computerMove, 500);
+            }
+        }
+
+        // コンピュータの手番
+        function computerMove() {
+            const validMoves = getValidMoves(computerColor);
+
+            if (validMoves.length === 0) {
+                endGame();
+                return;
+            }
+
+            const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+            const [row, col] = randomMove;
+
+            board[row][col] = computerColor;
+            flipDiscs(row, col, computerColor);
+            drawBoard();
+            updateScore();
+
+            if (isGameOver()) {
+                endGame();
+            } else {
+                messageElement.textContent = `あなたのターン (${playerColor})`;
+            }
+        }
+
+        // 有効な手を判定
+        function isValidMove(row, col, color) {
+            return getFlippableDiscs(row, col, color).length > 0;
+        }
+
+        // ひっくり返すべきディスクを取得
+        function getFlippableDiscs(row, col, color) {
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]
+            ];
+            const opponentColor = color === 'black' ? 'white' : 'black';
+            let flippable = [];
+
+            for (let [dx, dy] of directions) {
+                let x = row + dx;
+                let y = col + dy;
+                let possibleFlips = [];
+
+                while (x >= 0 && x < 8 && y >= 0 && y < 8 && board[x][y] === opponentColor) {
+                    possibleFlips.push([x, y]);
+                    x += dx;
+                    y += dy;
+                }
+
+                if (x >= 0 && x < 8 && y >= 0 && y < 8 && board[x][y] === color) {
+                    flippable = flippable.concat(possibleFlips);
+                }
+            }
+
+            return flippable;
+        }
+
+        // ディスクをひっくり返す
+        function flipDiscs(row, col, color) {
+            const flippableDiscs = getFlippableDiscs(row, col, color);
+
+            for (let [x, y] of flippableDiscs) {
+                board[x][y] = color;
+            }
+        }
+
+        // ゲーム終了判定
+        function isGameOver() {
+            const blackCount = board.flat().filter(cell => cell === 'black').length;
+            const whiteCount = board.flat().filter(cell => cell === 'white').length;
+            return blackCount + whiteCount === 64 || !getValidMoves('black').length && !getValidMoves('white').length;
+        }
+
+        // ゲーム終了時の処理
+        function endGame() {
+            const blackCount = board.flat().filter(cell => cell === 'black').length;
+            const whiteCount = board.flat().filter(cell => cell === 'white').length;
+
+            if (blackCount > whiteCount) {
+                messageElement.textContent = 'あなたの勝ち！';
+            } else if (whiteCount > blackCount) {
+                messageElement.textContent = 'コンピュータの勝ち！';
+            } else {
+                messageElement.textContent = '引き分け！';
+            }
+        }
+
+        // 有効な手を取得
+        function getValidMoves(color) {
+            let validMoves = [];
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    if (isValidMove(row, col, color)) {
+                        validMoves.push([row, col]);
+                    }
+                }
+            }
+            return validMoves;
+        }
+
+        // スコアの更新
+        function updateScore() {
+            const blackCount = board.flat().filter(cell => cell === 'black').length;
+            const whiteCount = board.flat().filter(cell => cell === 'white').length;
+            scoreElement.textContent = `黒: ${blackCount} | 白: ${whiteCount}`;
+        }
+    </script>
+
+</body>
+</html>
