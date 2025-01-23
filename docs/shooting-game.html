@@ -60,11 +60,33 @@
     let gameOver = false;
     let bossAppeared = false;
 
-    // キー入力
-    const keys = {};
+    // タッチ関連
+    let isDragging = false;
 
-    document.addEventListener("keydown", (e) => keys[e.key] = true);
-    document.addEventListener("keyup", (e) => keys[e.key] = false);
+    // タッチイベントリスナー
+    canvas.addEventListener("touchstart", (e) => {
+        const touch = e.touches[0];
+        const touchX = touch.clientX - canvas.offsetLeft;
+        if (touchX >= 0 && touchX <= canvas.width) {
+            playerX = touchX - playerWidth / 2; // 自機をタップ位置に移動
+            isDragging = true;
+        }
+    });
+
+    canvas.addEventListener("touchmove", (e) => {
+        if (isDragging) {
+            const touch = e.touches[0];
+            const touchX = touch.clientX - canvas.offsetLeft;
+            if (touchX >= 0 && touchX <= canvas.width) {
+                playerX = touchX - playerWidth / 2; // ドラッグで移動
+            }
+        }
+        e.preventDefault(); // スクロールを防ぐ
+    });
+
+    canvas.addEventListener("touchend", () => {
+        isDragging = false; // ドラッグ終了
+    });
 
     // プレイヤー描画
     function drawPlayer() {
