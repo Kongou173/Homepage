@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高度な計算機</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+        .display {
+            width: 100%;
+            height: 50px;
+            text-align: right;
+            padding: 10px;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #f4f4f9;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        .button {
+            padding: 20px;
+            font-size: 18px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #ddd;
+        }
+
+        .button:active {
+            background-color: #ccc;
+        }
+
+        .equals {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .history {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <input type="text" id="display" class="display" disabled>
+        <div class="buttons">
+            <div class="button clear" onclick="clearDisplay()">C</div>
+            <div class="button" onclick="appendToDisplay('7')">7</div>
+            <div class="button" onclick="appendToDisplay('8')">8</div>
+            <div class="button" onclick="appendToDisplay('9')">9</div>
+            <div class="button" onclick="appendToDisplay('/')">/</div>
+            <div class="button" onclick="appendToDisplay('4')">4</div>
+            <div class="button" onclick="appendToDisplay('5')">5</div>
+            <div class="button" onclick="appendToDisplay('6')">6</div>
+            <div class="button" onclick="appendToDisplay('*')">*</div>
+            <div class="button" onclick="appendToDisplay('1')">1</div>
+            <div class="button" onclick="appendToDisplay('2')">2</div>
+            <div class="button" onclick="appendToDisplay('3')">3</div>
+            <div class="button" onclick="appendToDisplay('-')">-</div>
+            <div class="button" onclick="appendToDisplay('0')">0</div>
+            <div class="button" onclick="appendToDisplay('.')">.</div>
+            <div class="button" onclick="appendToDisplay('+')">+</div>
+            <div class="button equals" onclick="calculate()">=</div>
+        </div>
+        <div class="history" id="history"></div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let history = document.getElementById('history');
+        let currentExpression = '';
+        let resultHistory = [];
+
+        function appendToDisplay(value) {
+            currentExpression += value;
+            display.value = currentExpression;
+        }
+
+        function clearDisplay() {
+            currentExpression = '';
+            display.value = '';
+        }
+
+        function calculate() {
+            try {
+                // 分数計算と関数計算の処理
+                currentExpression = currentExpression.replace(/(\d+)\/(\d+)/g, '($1/$2)');
+                currentExpression = currentExpression.replace(/(\d+)\^2/g, '($1**2)');
+                
+                // 四則演算、平方根、x²、関数計算
+                let result = eval(currentExpression);
+                
+                // 関数計算（例：sin, cos, tan, sqrt, pi）
+                result = result.toString().replace(/(\bpi\b)/g, Math.PI);
+                result = result.toString().replace(/(\bsqrt\()/g, 'Math.sqrt(');
+                result = eval(result);
+                
+                // 結果を表示
+                display.value = result;
+                
+                // 結果を履歴に追加
+                resultHistory.push(`${currentExpression} = ${result}`);
+                updateHistory();
+                currentExpression = result.toString();
+            } catch (e) {
+                display.value = 'Error';
+                currentExpression = '';
+            }
+        }
+
+        // 履歴を更新
+        function updateHistory() {
+            history.innerHTML = resultHistory.map(item => `<div>${item}</div>`).join('');
+        }
+
+        // 数学関数の計算処理
+        function evaluateFunction(expr) {
+            expr = expr.replace(/sin\((.*?)\)/g, (match, p1) => `Math.sin(${p1})`);
+            expr = expr.replace(/cos\((.*?)\)/g, (match, p1) => `Math.cos(${p1})`);
+            expr = expr.replace(/tan\((.*?)\)/g, (match, p1) => `Math.tan(${p1})`);
+            expr = expr.replace(/sqrt\((.*?)\)/g, (match, p1) => `Math.sqrt(${p1})`);
+            expr = expr.replace(/pi/g, Math.PI);
+            return expr;
+        }
+    </script>
+
+</body>
+</html>
