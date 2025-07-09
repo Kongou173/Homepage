@@ -16,7 +16,7 @@
     }
     /* --- ナビゲーションバー --- */
     .navbar {
-      width: 100%;
+      width: 100vw;
       background: rgba(8, 40, 60, 0.92);
       box-shadow: 0 2px 16px #00fff755;
       position: fixed;
@@ -25,9 +25,10 @@
       z-index: 200;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
+      justify-content: flex-start; /* ←左寄せ */
+      padding: 0 0 0 18px;         /* 左だけ余白 */
       height: 58px;
+      overflow-x: auto;            /* 横スクロールで見切れ防止 */
     }
     .navbar-title {
       font-size: 1.33rem;
@@ -38,10 +39,17 @@
       text-shadow: 0 2px 12px #00fff7aa;
       font-weight: bold;
       user-select: none;
+      margin-right: 22px;
+      flex-shrink: 0;
     }
     nav {
       display: flex;
       gap: 22px;
+      flex: 1 1 auto;
+      justify-content: flex-start; /* ←左寄せ */
+      align-items: center;
+      min-width: 0;
+      overflow-x: auto;
     }
     nav a {
       text-decoration: none;
@@ -53,12 +61,13 @@
       border-radius: 6px;
       transition: background 0.19s, color 0.19s;
       position: relative;
+      white-space: nowrap; /* メニュー名が折り返さない */
+      flex-shrink: 0;
     }
     nav a:hover {
       background: #00fff733;
       color: #00fff7;
     }
-
     /* ハンバーガーメニュー */
     .hamburger {
       display: none;
@@ -69,6 +78,7 @@
       align-items: center;
       cursor: pointer;
       z-index: 300;
+      margin-left: auto;
     }
     .hamburger span {
       display: block;
@@ -79,14 +89,22 @@
       border-radius: 2px;
       transition: .23s;
     }
-
     /* モバイル用メニュー開閉 */
     @media (max-width: 700px) {
+      .navbar {
+        flex-wrap: wrap;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .navbar-title {
+        margin-left: 18px;
+        margin-right: 12px;
+      }
       nav {
         position: fixed;
         top: 58px;
         left: 0;
-        width: 100%;
+        width: 100vw;
         background: rgba(8,40,60,0.98);
         flex-direction: column;
         gap: 0;
@@ -94,6 +112,8 @@
         overflow: hidden;
         box-shadow: 0 4px 32px #00fff799;
         max-height: 0;
+        align-items: flex-start;
+        padding-left: 0;
       }
       nav.open {
         max-height: 330px;
@@ -107,9 +127,9 @@
       }
       .hamburger {
         display: flex;
+        margin-right: 16px;
       }
     }
-
     /* --- 時計 --- */
     .clock-container {
       position: fixed;
@@ -132,7 +152,6 @@
         padding: 10px 14px;
       }
     }
-
     .futuristic {
       font-size: 2.5rem;
       letter-spacing: 0.15em;
@@ -188,11 +207,6 @@
   <header>
     <div class="navbar">
       <div class="navbar-title">Kongou's Page</div>
-      <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
       <nav id="nav-menu">
         <a href="index.html">ホーム</a>
         <a href="https://kongou173.github.io/Coresync-bot/">Coresync bot公式サイト</a>
@@ -200,6 +214,11 @@
         <a href="profile.html">プロフィール</a>
         <a href="games.html">ゲーム集</a>
       </nav>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
   </header>
   <div class="clock-container">
